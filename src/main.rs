@@ -21,13 +21,7 @@ fn main() {
         "\nWelcome to dice: get to 4000 in the least amount of throws. Exit game with ctrl + c"
     );
     // The first arg is working dir
-    let names = args().into_iter().skip(1);
-
-    // No players passed in
-    if names.size_hint().0 == 0 {
-        println!("Please pass in the names of the players! e.g $ riskydice Jim James Joe");
-        return;
-    }
+    let names = args().into_iter().skip(1).into_iter();
 
     let mut name_rng = thread_rng();
     let name_colors: Vec<Color> = vec![
@@ -45,6 +39,13 @@ fn main() {
     for name in names {
         players.push(Player {
             name: name.color(name_colors[name_rng.gen_range(0..name_colors.len())]),
+            score: 0,
+        });
+    }
+
+    if players.is_empty() {
+        players.push(Player {
+            name: "You".green(),
             score: 0,
         });
     }
@@ -140,7 +141,7 @@ Turn: {turn} (score: {score}, turn points: {turn_points})
         }
     }
 
-    /// Read in a number from the cl
+    /// Read in a number from the cl within the given range
     fn get_player_selection(input: &mut String, range: std::ops::RangeInclusive<usize>) -> usize {
         loop {
             input.clear();
